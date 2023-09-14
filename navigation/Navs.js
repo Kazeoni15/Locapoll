@@ -11,6 +11,7 @@ import { View } from "react-native";
 import CreatePoll from "../screens/CreatePoll";
 import Drafts from "../screens/Drafts";
 import EditPoll from "../screens/EditPoll";
+import Poll from "../screens/Poll";
 // import Test from "../screens/Test";
 
 
@@ -39,6 +40,7 @@ const screenOptions = {
         <Stack.Screen name="create-poll" component={CreatePoll}/>
         <Stack.Screen name="drafts" component={Drafts}/>
         <Stack.Screen name='edit' options={({ route }) => ({ title: `Edit Poll #${route.params.pollId}` })} component={EditPoll}/>
+        <Stack.Screen name='poll' options={({ route }) => ({ title: `Edit Poll #${route.params.pollId}` })} component={Poll}/>
       </Stack.Navigator>
     </NavigationContainer>
   )};

@@ -3,7 +3,7 @@ import { IconButton, Text } from "react-native-paper";
 import DeployForm from "../forms/DeployForm";
 import { useState } from "react";
 
-export default function DraftsItem({ navigation, data }) {
+export default function DraftsItem({userID, navigation, data, location }) {
   // console.log('draft',data.id)
   const [form , setForm] = useState(false)
 
@@ -40,7 +40,7 @@ export default function DraftsItem({ navigation, data }) {
     </View>
 
 
-    {form && <DeployForm data={data} navigation={navigation}/>}
+    {form && <DeployForm location={location} data={data} userID={userID} navigation={navigation}/>}
     </View>
    
   );

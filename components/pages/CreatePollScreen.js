@@ -145,7 +145,7 @@ export default function CreatePollScreen({ navigation, userID }) {
               }}
             />
           </View> */}
-          <Navbar userData={userData.data()} navigation={navigation}/>
+          <Navbar userData={userData.data()} navigation={navigation} />
           <View style={styles.body}>
             <Formik
               initialValues={{ question: "", options: ["", ""] }}
@@ -163,7 +163,6 @@ export default function CreatePollScreen({ navigation, userID }) {
                   question: values.question,
                   options: values.options,
                   created: Timestamp.now(),
-                  votes: [],
                 });
 
                 navigation.navigate("drafts");
@@ -190,8 +189,6 @@ export default function CreatePollScreen({ navigation, userID }) {
                       <View style={styles.form}>
                         {values.options.map((option, index) => (
                           <View key={index}>
-                          
-
                             <View style={{ height: 75 }}>
                               <TextInput
                                 label={`Option ${index + 1}`}
@@ -205,7 +202,7 @@ export default function CreatePollScreen({ navigation, userID }) {
                                     icon="minus"
                                     iconColor="red"
                                     onPress={() => {
-                                      if (index <= 1) {
+                                      if (values.options.length < 3) {
                                       } else {
                                         arrayHelpers.remove(index);
                                       }
@@ -222,7 +219,6 @@ export default function CreatePollScreen({ navigation, userID }) {
                                 </HelperText>
                               )}
                             </View>
-                           
                           </View>
                         ))}
                         <View
@@ -233,7 +229,12 @@ export default function CreatePollScreen({ navigation, userID }) {
                           }}
                         >
                           <IconButton
-                            onPress={() => arrayHelpers.push("")}
+                            onPress={() => {
+                              if (values.options.length > 5) {
+                              } else {
+                                arrayHelpers.push("");
+                              }
+                            }}
                             icon="plus"
                             iconColor="green"
                           />
@@ -266,7 +267,7 @@ const styles = StyleSheet.create({
   droidSafeArea: {
     flex: 1,
     backgroundColor: "#D2DE32",
-    paddingTop: Platform.OS === "android" ? 25 : 0,
+    // paddingTop: Platform.OS === "android" ? 25 : 0,
   },
   page: {
     backgroundColor: "#313866",

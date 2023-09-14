@@ -33,7 +33,7 @@ export default function Navbar({ navigation, userData }) {
               }}
             />
           ) : (
-            <IconButton icon="account-circle-outline" color="white" />
+            <IconButton icon="account-circle-outline" iconColor="white" />
           )}
           <Text style={styles.headText}>{userData.username}</Text>
         </View>
@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingTop: 25,
     paddingLeft: 15,
+    
   },
   headText: {
     fontSize: 20,

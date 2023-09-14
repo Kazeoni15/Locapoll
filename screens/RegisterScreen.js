@@ -55,6 +55,7 @@ const validationSchema = Yup.object().shape({
             email: values.email,
             username: values.username,
             create: Timestamp.now(),
+            votes:[]
           });
 
           

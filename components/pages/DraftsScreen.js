@@ -160,8 +160,8 @@ export default function DraftsScreen({ navigation, userID }) {
             <View style={{paddingBottom:200, paddingTop:20}}>
             {value?.docs && value.docs.map((doc, index)=>{
             return (
-              <View key={index}>
-                 <DraftsItem data={doc} navigation={navigation}/> 
+              <View style={{marginTop:10}} key={index}>
+                 <DraftsItem userID={userID} data={doc} location={location} navigation={navigation}/> 
          
                 
               </View>
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   droidSafeArea: {
     flex: 1,
     backgroundColor: "#D2DE32",
-    paddingTop: Platform.OS === "android" ? 25 : 0,
+    // paddingTop: Platform.OS === "android" ? 25 : 0,
   },
   page: {
     backgroundColor: "#313866",

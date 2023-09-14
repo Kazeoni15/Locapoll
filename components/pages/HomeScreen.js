@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, SafeAreaView, StyleSheet, Platform, Image } from "react-native";
+import { View, SafeAreaView, StyleSheet, Platform, Image, ScrollView } from "react-native";
 import {
   Text,
   Button,
@@ -7,18 +7,18 @@ import {
   Searchbar,
   Drawer,
 } from "react-native-paper";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useAuth } from "../../hooks/useAuth";
-import CreatePoll from "../../screens/CreatePoll";
-import { useDocument } from "react-firebase-hooks/firestore";
 
-import { doc, getDoc, collection } from "firebase/firestore";
+
+import { useCollection, useDocument } from "react-firebase-hooks/firestore";
+
+import { doc, getDoc, collection, query, where } from "firebase/firestore";
 import { app, db } from "../../firebase-config";
 import * as Location from "expo-location";
 import { getAuth, signOut } from "firebase/auth";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { TouchableOpacity } from "react-native-web";
+
+
 import Navbar from "../nav/Navbar";
+import ListLocation from "../list/ListLocation";
 
 export default function HomeScreen({ navigation, userID }) {
   //   console.log("HomeScreen",userID)
@@ -26,48 +26,25 @@ export default function HomeScreen({ navigation, userID }) {
   //   console.log(auth)
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [active, setActive] = useState("");
+
   const [searchQuery, setSearchQuery] = useState("");
   const [userData, loading, error] = useDocument(doc(db, "users", userID), {
     snapshotListenOptions: { includeMetadataChanges: false },
   });
+  
 
-  //   console.log(userData?.data());
+
+
+  
   const onChangeSearch = (query) => setSearchQuery(query);
 
   const onSearch = () => {
     console.log(searchQuery);
   };
 
-  function calculateDistance(lat1, lon1, lat2, lon2) {
-    const earthRadiusKm = 6371; // Radius of the Earth in kilometers
+  
 
-    // Convert latitude and longitude from degrees to radians
-    const lat1Rad = toRadians(lat1);
-    const lon1Rad = toRadians(lon1);
-    const lat2Rad = toRadians(lat2);
-    const lon2Rad = toRadians(lon2);
 
-    // Calculate the differences between coordinates
-    const latDiff = lat2Rad - lat1Rad;
-    const lonDiff = lon2Rad - lon1Rad;
-
-    // Calculate the Haversine distance
-    const a =
-      Math.sin(latDiff / 2) ** 2 +
-      Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(lonDiff / 2) ** 2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distanceKm = earthRadiusKm * c;
-
-    return distanceKm;
-  }
-
-  function toRadians(degrees) {
-    return degrees * (Math.PI / 180);
-  }
-
-  //   const distance = calculateDistance(location?.coords.latitude, location?.coords.longitude, 48.8566, 2.3522); // Berlin to Paris
-  //   console.log(`Distance: ${distance} km`);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -96,52 +73,7 @@ export default function HomeScreen({ navigation, userID }) {
       {userData && (
         <View style={styles.page}>
           <Navbar navigation={navigation} userData={userData.data()}/>
-          {/* <View style={styles.header}>
-            <View style={styles.headerel1}>
-              {userData.data().avatar ? (
-                <Image
-                  source={{ uri: userData.data().avatar.url }}
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 100,
-                    marginBottom: 20,
-                  }}
-                />
-              ) : (
-                <IconButton icon={"account-cricle-outline"} iconColor="white" />
-              )}
-              <Text style={styles.headText}>{userData.data().username}</Text>
-            </View>
-
-            <IconButton
-              icon={"cog"}
-              iconColor="white"
-              onPress={() => {
-                navigation.navigate("settings");
-              }}
-            />
-
-            <IconButton
-              icon={"logout"}
-              iconColor="white"
-              onPress={async () => {
-                try {
-                  // Clear the UID from AsyncStorage
-                  await AsyncStorage.clear();
-
-                  // Add any additional logout logic here (e.g., sign out from Firebase)
-                  signOut(getAuth(app));
-                  // Navigate to your sign-in screen or any other appropriate screen
-                  // For example, if you're using React Navigation, you can navigate like this:
-                  // navigation.navigate('SignIn');
-                } catch (error) {
-                  console.error("Error while logging out:", error);
-                  // Handle any logout errors as needed
-                }
-              }}
-            />
-          </View> */}
+          
           <View style={styles.body}>
             <View style={styles.operations}>
               <Text style={styles.title}>Polls in Vicinity</Text>
@@ -165,14 +97,15 @@ export default function HomeScreen({ navigation, userID }) {
               onIconPress={onSearch}
             />
 
+            <ScrollView style={styles.items}>
             {location?.coords ? (
-              <View>
-                <Text>Latitude: {location.coords.latitude}</Text>
-                <Text>Longitude: {location.coords.longitude}</Text>
-              </View>
+              <ListLocation location={location} navigation={navigation}/>
             ) : (
               <Text>Loading location...</Text>
-            )}
+            )} 
+
+            </ScrollView>
+        
           </View>
         </View>
       )}
@@ -243,4 +176,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingLeft: 15,
   },
+  items:{
+    
+    paddingTop:20
+  }
 });

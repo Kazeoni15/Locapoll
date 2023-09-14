@@ -1,12 +1,13 @@
 import React from "react";
-import { View,  Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { Formik } from "formik";
 import * as yup from "yup";
 import FormTextInput from "../auth/FormTextInput";
-import { HelperText, Button,  TextInput } from "react-native-paper";
+import { HelperText, Button, TextInput } from "react-native-paper";
+import { Timestamp, addDoc, collection, doc } from "firebase/firestore";
+import { db } from "../../firebase-config";
 
-const DeployForm = ({data, navigation}) => {
-
+const DeployForm = ({userID, data, navigation, location }) => {
   const validationSchema = yup.object().shape({
     radius: yup
       .number()
@@ -15,9 +16,28 @@ const DeployForm = ({data, navigation}) => {
       .required("Radius is required"),
   });
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     // Handle form submission here
-    console.log("Submitted values:", values);
+
+    const payload = {
+      user:userID,
+      radius: parseInt(values.radius),
+      question: data.data().question,
+      location: location,
+      deployed: Timestamp.now(),
+      options: data.data().options.map((option) => ({
+        text: option,
+        votes: [], // Initialize votes to 0
+      })),
+    };
+
+    try {
+      await addDoc(collection(db, "deployed"), payload);
+
+      navigation.navigate("home");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const initialValues = {
@@ -41,20 +61,26 @@ const DeployForm = ({data, navigation}) => {
           <View style={{ width: "80%" }}>
             <TextInput
               label={"Set a Radius (Km)"}
-       
               value={values.radius}
               keyboardType="numeric"
               onChangeText={handleChange("radius")}
-              mode='flat'
-         
+              mode="flat"
               underlineColor={"#D2DE32"}
               activeUnderlineColor={"#016A70"}
               textColor={"#016A70"}
             />
-            {errors.radius && <HelperText type="error">{errors.radius}</HelperText>}
-            <Button style={{marginTop:10}} icon={'check'} textColor="#313866" mode="text"  onPress={handleSubmit}>Deploy</Button>
-
-            
+            {errors.radius && (
+              <HelperText type="error">{errors.radius}</HelperText>
+            )}
+            <Button
+              style={{ marginTop: 10 }}
+              icon={"check"}
+              textColor="#313866"
+              mode="text"
+              onPress={handleSubmit}
+            >
+              Deploy
+            </Button>
           </View>
         )}
       </Formik>
@@ -67,7 +93,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingBottom: 25
+    paddingBottom: 25,
   },
   input: {
     width: 300,

@@ -3,9 +3,10 @@ import { SafeAreaView } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import { useEffect, useState } from "react";
 import HomeScreen from "../components/pages/HomeScreen";
+import PollScreen from "../components/pages/PollScreen";
 
 
-export default function Home ({ navigation }) {
+export default function Poll ({ navigation, route }) {
     const [userUid, setUserUid] = useState(null);
    
 
@@ -44,7 +45,7 @@ export default function Home ({ navigation }) {
 
       {/* {userUid ? <Text>{userUid}</Text>: <Text>Loading...</Text>} */}
 
-        {userUid ? <HomeScreen navigation={navigation} userID={userUid}/>: <Text>Loading...</Text>}
+        {userUid ? <PollScreen navigation={navigation} userID={userUid} route={route}/>: <Text>Loading...</Text>}
   
     </SafeAreaView>
   );
@@ -55,6 +56,6 @@ const styles = StyleSheet.create({
   droidSafeArea: {
     flex: 1,
     backgroundColor: "#D2DE32",
-    // paddingTop: Platform.OS === "android" ? 25 : 0,
+    paddingTop: Platform.OS === "android" ? 25 : 0,
   },
 })

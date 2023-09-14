@@ -69,7 +69,7 @@ export default function EditPollScreen ({navigation, userID, route}){
                   question: values.question,
                   options: values.options,
                   lastmodified: Timestamp.now(),
-                  votes: [],
+                  // votes: [],
                 });
 
                 navigation.navigate("drafts");
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     droidSafeArea: {
       flex: 1,
       backgroundColor: "#D2DE32",
-      paddingTop: Platform.OS === "android" ? 25 : 0,
+      // paddingTop: Platform.OS === "android" ? 25 : 0,
     },
     page: {
       backgroundColor: "#313866",
