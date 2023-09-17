@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { Text, Button, IconButton } from "react-native-paper";
+import { Text, Button, IconButton, ActivityIndicator, Snackbar } from "react-native-paper";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useAuth } from "../../hooks/useAuth";
 import { Formik } from "formik";
@@ -40,6 +40,7 @@ const validationSchema = Yup.object().shape({
 export default function SettingsScreen({ navigation, userID }) {
   
   const [image, setImage] = useState(null);
+  const [snack, setSnack] = useState(false)
 
   const [userData, loading, error] = useDocument(doc(db, "users", userID), {
     snapshotListenOptions: { includeMetadataChanges: false },
@@ -133,44 +134,12 @@ export default function SettingsScreen({ navigation, userID }) {
       
   };
 
-  // const handleUpload = ()=>{
-  //   if(image.type == "image"){
-  //     // if(!avatar === undefined){
 
-  //     //   const delRef = ref(storage, avatar.location)
-  //     //   deleteObject(delRef).then(() => {
-  //     //     const newimgRef = ref(storage, `${user.uid}/avatar/${image.uri.split("/")[image.uri.split("/").length-1]}`)
-  //     //   uploadBytesResumable(newimgRef, image.uri).then((snapshot) => {
-  //     //       getDownloadURL(snapshot.ref).then((url)=>{
-
-  //     //         const docRef= doc(db, 'users', user.uid)
-  //     //         updateDoc(docRef, {avatar:{url:url, location:snapshot.ref.fullPath}})
-
-  //     //       })
-  //     //     });
-  //     //   }).catch((error) => {
-  //     //     console.log(err)
-  //     //   });
-
-  //     // } else {
-  //       const imgRef = ref(storage, `${user.uid}/avatar/${image.uri.split("/")[image.uri.split("/").length-1]}`)
-  //       uploadBytesResumable(imgRef, image).then((snapshot) => {
-  //           getDownloadURL(snapshot.ref).then((url)=>{
-
-  //             const docRef= doc(db, 'users', user.uid)
-  //             updateDoc(docRef, {avatar:{url:url, location:snapshot.ref.fullPath}})
-
-  //           })
-  //         });
-
-  //     // }
-
-  //   }
-
-  // }
 
   const submit = (values, actions) => {
     // console.log(values, image);
+
+    setSnack(true)
 
     if (image) {
       handleUpload();
@@ -289,8 +258,16 @@ export default function SettingsScreen({ navigation, userID }) {
             </Formik>
           </View>
         </View>}
+
+        <Snackbar
+        visible={snack}
+        onDismiss={()=>setSnack(false)}
+        duration={1000}
+        >
+        Saved
+      </Snackbar>
       
-        {loading && <Text>Loading...</Text> }
+        {loading &&  <ActivityIndicator style={{marginTop: "40%"}} size="large" color="#313866" animating={true}/> }
     </SafeAreaView>
   );
 }

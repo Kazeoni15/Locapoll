@@ -7,6 +7,7 @@ import {
 
   TextInput,
   HelperText,
+  ActivityIndicator,
 } from "react-native-paper";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useAuth } from "../../hooks/useAuth";
@@ -186,7 +187,7 @@ export default function EditPollScreen ({navigation, userID, route}){
         </View>
       )}
 
-      {loading && <Text>Loading...</Text>}
+      {loading &&  <ActivityIndicator style={{marginTop: "40%"}} size="large" color="#313866" animating={true}/>}
     </SafeAreaView>
     )
 

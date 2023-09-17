@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Button, TextInput } from "react-native-paper";
+import { ActivityIndicator, Button, TextInput } from "react-native-paper";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import FormTextInput from "../components/auth/FormTextInput";
@@ -15,11 +15,14 @@ const validationSchema = Yup.object().shape({
 });
 
 const LoginScreen = ({ navigation }) => {
+  const [activity, setActivity] = useState(false)
 
   const auth = getAuth()
   
 
   const handleLogin = async (values, actions) => {
+
+    setActivity(true)
 
 
     try{
@@ -31,6 +34,7 @@ const LoginScreen = ({ navigation }) => {
       
 
     } catch (err){
+      setActivity(false)
       console.log("login error: ", err)
       actions.setFieldError("password", "User or Password are incorrect. Try Again.")
 
@@ -83,6 +87,7 @@ const LoginScreen = ({ navigation }) => {
             <Button textColor="#A2C579" mode="text" onPress={handleRegister}>
               Don't have an account? Register
             </Button>
+            <ActivityIndicator animating={activity} color={"#D2DE32"} />
           </View>
         )}
       </Formik>

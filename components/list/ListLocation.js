@@ -1,4 +1,4 @@
-import { collection, query, where } from "firebase/firestore";
+import { collection, limit, orderBy, query, where } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { View } from "react-native";
 import { Text } from "react-native-paper";
@@ -8,7 +8,7 @@ import PollItem from "../clickable/PollItem";
 
 export default function ListLocation ({navigation, location}){
     const [value, Vloading, Verror] = useCollection(
-        collection(db, `deployed`) ,
+        query(collection(db, `deployed`), orderBy('deployed', 'desc'), limit(100) ),
         {
           snapshotListenOptions: { includeMetadataChanges: false },
         }

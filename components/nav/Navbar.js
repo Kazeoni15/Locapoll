@@ -1,6 +1,9 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getAuth, signOut } from 'firebase/auth';
 import React, { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button, IconButton } from 'react-native-paper';
+import { app } from '../../firebase-config';
 
 export default function Navbar({ navigation, userData }) {
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
@@ -14,9 +17,21 @@ export default function Navbar({ navigation, userData }) {
     setIsDrawerVisible(false); // Close the drawer after navigation
   };
 
-  const logout = () => {
-    // Implement your logout logic here
-  };
+  const logout =async () => {
+   
+    try {
+   
+
+      // Add any additional logout logic here (e.g., sign out from Firebase)
+      signOut(getAuth(app));
+      // Navigate to your sign-in screen or any other appropriate screen
+      // For example, if you're using React Navigation, you can navigate like this:
+      // navigation.navigate('SignIn');
+    } catch (error) {
+      console.error("Error while logging out:", error);
+      // Handle any logout errors as needed
+    }
+  }
 
   return (
     <View>
@@ -65,9 +80,16 @@ export default function Navbar({ navigation, userData }) {
           >
             Drafts
           </Button>
+          <Button
+            icon={'vote'}
+            onPress={() => navigateTo('myvotes')}
+            textColor='white' // Replace with your screen name
+          >
+            My Votes
+          </Button>
           {/* Add more TouchableOpacity items for other navigation options */}
           <Button
-           onPress={logout}
+           onPress={()=>logout()}
            textColor='white'
            icon={'logout'}
            >

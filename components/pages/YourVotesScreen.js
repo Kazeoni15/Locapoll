@@ -11,19 +11,26 @@ import {
 
 import { useDocument, useCollection } from "react-firebase-hooks/firestore";
 
-import { doc, getDoc, collection, updateDoc, Timestamp, addDoc, query, orderBy} from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  collection,
+  updateDoc,
+  Timestamp,
+  addDoc,
+} from "firebase/firestore";
 import { app, db } from "../../firebase-config";
 import * as Location from "expo-location";
 import { getAuth, signOut } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TouchableOpacity, ScrollView } from "react-native";
 import FormTextInput from "../auth/FormTextInput";
-import Navbar from "../nav/Navbar"
+import Navbar from "../nav/Navbar";
 import DraftsItem from "../clickable/DraftsItem";
 
-export default function DraftsScreen({ navigation, userID }) {
+export default function YourVotesScreen({ navigation, userID }) {
   //   console.log("HomeScreen",userID)
-  const auth = getAuth(app);
+
   //   console.log(auth)
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -31,12 +38,6 @@ export default function DraftsScreen({ navigation, userID }) {
   const [userData, loading, error] = useDocument(doc(db, "users", userID), {
     snapshotListenOptions: { includeMetadataChanges: false },
   });
-  const [value, Vloading, Verror] = useCollection(
-    query(collection(db, `users/${userID}/drafts`), orderBy('created', 'desc')),
-    {
-      snapshotListenOptions: { includeMetadataChanges: false },
-    }
-  );
 
   // console.log(value?.docs[0].data())
 
@@ -96,94 +97,54 @@ export default function DraftsScreen({ navigation, userID }) {
     <SafeAreaView style={styles.droidSafeArea}>
       {userData && (
         <View style={styles.page}>
-          {/* <View style={styles.header}>
-            <View style={styles.headerel1}>
-              {userData.data().avatar ? (
-                <Image
-                  source={{ uri: userData.data().avatar.url }}
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 100,
-                    marginBottom: 20,
-                  }}
-                />
-              ) : (
-                <IconButton icon={"account-cricle-outline"} iconColor="white" />
-              )}
-              <Text style={styles.headText}>{userData.data().username}</Text>
-            </View>
-
-            <IconButton
-              icon={"cog"}
-              iconColor="white"
-              onPress={() => {
-                navigation.navigate("settings");
-              }}
-            />
-
-            <IconButton
-              icon={"logout"}
-              iconColor="white"
-              onPress={async () => {
-                try {
-                  // Clear the UID from AsyncStorage
-                  await AsyncStorage.clear();
-
-                  // Add any additional logout logic here (e.g., sign out from Firebase)
-                  signOut(getAuth(app));
-                  // Navigate to your sign-in screen or any other appropriate screen
-                  // For example, if you're using React Navigation, you can navigate like this:
-                  // navigation.navigate('SignIn');
-                } catch (error) {
-                  console.error("Error while logging out:", error);
-                  // Handle any logout errors as needed
-                }
-              }}
-            />
-          </View> */}
           <Navbar userData={userData.data()} navigation={navigation} />
           <View style={styles.body}>
-          <View style={styles.operations}>
-              <Text style={styles.title}>Drafts</Text>
-              <Button
-                style={{ marginRight: 10 }}
-                onPress={() => navigation.navigate('create-poll')}
-                buttonColor="#D2DE32"
-                mode="contained"
-                icon={"plus"}
-                textColor="#313866"
-              >
-                Create
-              </Button>
+            <View style={styles.operations}>
+              <Text style={styles.title}>Your Votes</Text>
             </View>
-          <ScrollView>
-            <View style={{paddingBottom:200, paddingTop:20}}>
-            {value?.docs && value.docs.map((doc, index)=>{
-            return (
-              <View style={{marginTop:10}} key={index}>
-                 <DraftsItem userID={userID} data={doc} location={location} navigation={navigation}/> 
-         
-                
+            <ScrollView>
+              <View style={{ paddingBottom: 200, paddingTop: 20, rowGap: 15 }}>
+                {userData.data() &&
+                  userData.data().votes.map((item, index) => {
+                    console.log(item);
+                    return (
+                        <View key={index} style={styles.container}>
+                        <View style={styles.item}>
+                       <View style={{ width: "80%" }}>
+                         <Text style={styles.question}>{item.question}</Text>
+                         <Text style={styles.option}>  {item.votedFor}</Text>
+                         
+                         
+                       </View>
+                       <View>  
+                        <IconButton icon={'arrow-right'} iconColor="#313866" onPress={()=>{navigation.navigate('poll', {pollID:item.pollId})}}/>
+                       
+                 
+                       </View>
+                       
+                 
+                       
+                     </View>
+                 
+                 
+                 
+                     </View>
+                    );
+                  })}
               </View>
-            )
-          })}
-
-            </View>
-          
-
-          </ScrollView>
-          
-
-
-
-
-            
+            </ScrollView>
           </View>
         </View>
       )}
 
-      {loading &&  <ActivityIndicator style={{marginTop: "40%"}} size="large" color="#313866" animating={true}/>}
+      {loading && (
+        <ActivityIndicator
+          style={{ marginTop: "40%" }}
+          size="large"
+          color="#313866"
+          animating={true}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -192,7 +153,7 @@ const styles = StyleSheet.create({
   droidSafeArea: {
     flex: 1,
     backgroundColor: "#D2DE32",
-    // paddingTop: Platform.OS === "android" ? 25 : 0,
+    paddingTop: Platform.OS === "android" ? 18 : 0,
   },
   page: {
     backgroundColor: "#313866",
@@ -241,7 +202,7 @@ const styles = StyleSheet.create({
   },
   operations: {
     width: "100%",
-    
+
     flexDirection: "row",
     justifyContent: "space-between",
     // backgroundColor:'red',
@@ -249,8 +210,33 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
   },
   form: {
-
     rowGap: 15,
     width: "90%",
   },
+  item: {
+    marginTop: 5,
+    flexDirection: "row",
+    padding: 20,
+    justifyContent: "space-between",
+    columnGap: 5,
+    // alignItems: "center",
+    // width: "100%",
+    
+  },
+  question: {
+    color: "#313866",
+    fontSize: 18,
+    fontWeight: "bold",
+    padding: 3,
+  },
+  option: {
+    color: "#313866",
+  },
+  container:{
+    backgroundColor: "#D2DE32",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#313866",
+   
+  }
 });

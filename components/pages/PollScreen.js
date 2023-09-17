@@ -13,6 +13,7 @@ import {
   IconButton,
   Searchbar,
   Drawer,
+  ActivityIndicator,
 } from "react-native-paper";
 
 import { useCollection, useDocument } from "react-firebase-hooks/firestore";
@@ -38,6 +39,8 @@ export default function PollScreen({ navigation, userID, route }) {
   //   console.log(auth)
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  
+
 
   const [searchQuery, setSearchQuery] = useState("");
   const [userData, loading, error] = useDocument(doc(db, "users", userID), {
@@ -206,7 +209,7 @@ export default function PollScreen({ navigation, userID, route }) {
           </View>
         )}
 
-        {loading && <Text>Loading...</Text>}
+        {loading &&  <ActivityIndicator style={{marginTop: "40%"}} size="large" color="#313866" animating={true}/>}
       </View>
     </SafeAreaView>
   );

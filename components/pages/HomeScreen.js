@@ -6,6 +6,7 @@ import {
   IconButton,
   Searchbar,
   Drawer,
+  ActivityIndicator,
 } from "react-native-paper";
 
 
@@ -89,19 +90,15 @@ export default function HomeScreen({ navigation, userID }) {
               </Button>
             </View>
 
-            <Searchbar
-              style={styles.searchbar}
-              onChangeText={onChangeSearch}
-              placeholder="Search"
-              onSubmitEditing={onSearch}
-              onIconPress={onSearch}
-            />
+            
+
+
 
             <ScrollView style={styles.items}>
             {location?.coords ? (
               <ListLocation location={location} navigation={navigation}/>
             ) : (
-              <Text>Loading location...</Text>
+              <ActivityIndicator style={{marginTop: "40%"}} size="large" color="#313866" animating={true}/>
             )} 
 
             </ScrollView>
@@ -110,7 +107,7 @@ export default function HomeScreen({ navigation, userID }) {
         </View>
       )}
 
-      {loading && <Text>Loading...</Text>}
+      {loading &&   <ActivityIndicator style={{marginTop: "40%"}} size="large" color="#313866" animating={true}/> }
     </SafeAreaView>
   );
 }

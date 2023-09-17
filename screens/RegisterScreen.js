@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
+import { ActivityIndicator, Button, TextInput } from 'react-native-paper';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import FormTextInput from '../components/auth/FormTextInput';
@@ -23,11 +23,14 @@ const validationSchema = Yup.object().shape({
   
   const RegisterScreen = ({ navigation }) => {
 
+    const [activity, setActivity] = useState(false)
+
 
     const auth = getAuth()
 
     const handleRegister = async (values, actions) => {
-      console.log('pressed')
+      // console.log('pressed')
+      setActivity(true)
       try {
         if (
           (
@@ -71,6 +74,7 @@ const validationSchema = Yup.object().shape({
         }
       } catch (err) {
         console.log(err)
+        setActivity(false)
         switch (err.code) {
           case "existing-username":
             actions.setFieldError("username", "Username is already taken");
@@ -173,6 +177,11 @@ const validationSchema = Yup.object().shape({
               <Button buttonColor="#D2DE32" textColor="#FFFFDD" mode="elevated" onPress={handleSubmit}>
                 Register
               </Button>
+
+              <ActivityIndicator animating={activity} color={"#D2DE32"} />
+
+
+              
             </View>
           )}
         </Formik>
